@@ -21,7 +21,7 @@ app.post('/send-mail', (req, res) => {
   res.status(202).json({ message: 'Request received and is being processed.' });
 
   // Extract data from request body
-  const { user, pass, htmlToSend, email, subject } = req.body;
+  const { user, pass, htmlToSend, email, subject ,CompanyName} = req.body;
 
   // Process the request
   (async () => {
