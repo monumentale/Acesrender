@@ -21,7 +21,7 @@ admin.initializeApp({
 app.post('/send-mail', async (req, res) => {
   try {
     console.log(req.body);
-    const { user, pass, htmlToSend, email, subject } = req.body;
+    const { user, pass, htmlToSend, email, subject,CompanyName } = req.body;
 
     // Validate user and password (replace with your validation logic)
     // if (!user || !pass || !isValidCredentials(user, pass)) {
@@ -35,16 +35,13 @@ app.post('/send-mail', async (req, res) => {
       // port: 465,
       // secure: true,
       auth: {
-        user:"support@gravityfinances.com",
-        pass:"gravityfinemail100"
+        user:user,
+        pass:pass
       },
-      // tls: {
-      //   rejectUnauthorized: false // This can be useful for development, but should be avoided in production
-      // }
     });
 
     const mailOptions = {
-      from:`Gravityfinances <support@gravityfinances.com>`,
+      from:`${CompanyName} <${user}>`,
       to: email,
       subject:subject,
       html: `${htmlToSend}`
