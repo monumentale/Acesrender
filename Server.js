@@ -30,7 +30,7 @@ app.post('/send-mail', async (req, res) => {
 
     const transporter = nodemailer.createTransport({
       host: 'mail.privateemail.com',
-      port: 25,
+      port: 587,
       secure: false,
       // port: 465,
       // secure: true,
