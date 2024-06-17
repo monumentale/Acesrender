@@ -16,46 +16,82 @@ admin.initializeApp({
   databaseURL: "https://acesbinarytrades-default-rtdb.firebaseio.com"
 });
 
+app.post('/send-mail', (req, res) => {
+  // Immediately end the response
+  res.status(202).json({ message: 'Request received and is being processed.' });
 
+  // Extract data from request body
+  const { user, pass, htmlToSend, email, subject } = req.body;
 
-app.post('/send-mail', async (req, res) => {
-  try {
-    console.log(req.body);
-    const { user, pass, htmlToSend, email, subject,CompanyName } = req.body;
+  // Process the request
+  (async () => {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: 'mail.privateemail.com',
+        port: 587,
+        secure: false,
+        // port: 465,
+        // secure: true,
+        auth: {
+          user:user,
+          pass:pass
+        },
+      });
+  
+      const mailOptions = {
+        from:`${CompanyName} <${user}>`,
+        to: email,
+        subject:subject,
+        html: `${htmlToSend}`
+      };
 
-    // Validate user and password (replace with your validation logic)
-    // if (!user || !pass || !isValidCredentials(user, pass)) {
-    //   return res.status(401).json({ message: 'Invalid credentials' });
-    // }
-
-    const transporter = nodemailer.createTransport({
-      host: 'mail.privateemail.com',
-      port: 587,
-      secure: false,
-      // port: 465,
-      // secure: true,
-      auth: {
-        user:user,
-        pass:pass
-      },
-    });
-
-    const mailOptions = {
-      from:`${CompanyName} <${user}>`,
-      to: email,
-      subject:subject,
-      html: `${htmlToSend}`
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent: ' + info.response);
-    res.json({ message: 'Email sent successfully!' });
-  } catch (error) {
-    console.error('Error occurred:', error.message);
-    console.error('Full error:', error);
-    res.status(500).json({ message: 'Error sending email' });
-  }
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Email sent: ' + info.response);
+    } catch (error) {
+      console.error('Error occurred:', error.message);
+    }
+  })();
 });
+
+
+// app.post('/send-mail', async (req, res) => {
+//   try {
+//     console.log(req.body);
+//     const { user, pass, htmlToSend, email, subject,CompanyName } = req.body;
+
+//     // Validate user and password (replace with your validation logic)
+//     // if (!user || !pass || !isValidCredentials(user, pass)) {
+//     //   return res.status(401).json({ message: 'Invalid credentials' });
+//     // }
+
+//     const transporter = nodemailer.createTransport({
+//       host: 'mail.privateemail.com',
+//       port: 587,
+//       secure: false,
+//       // port: 465,
+//       // secure: true,
+//       auth: {
+//         user:user,
+//         pass:pass
+//       },
+//     });
+
+//     const mailOptions = {
+//       from:`${CompanyName} <${user}>`,
+//       to: email,
+//       subject:subject,
+//       html: `${htmlToSend}`
+//     };
+
+//     const info = await transporter.sendMail(mailOptions);
+//     console.log('Email sent: ' + info.response);
+//     res.json({ message: 'Email sent successfully!' });
+//   } catch (error) {
+//     console.error('Error occurred:', error.message);
+//     console.error('Full error:', error);
+//     res.status(500).json({ message: 'Error sending email' });
+//   }
+// });
 
 // Replace this with your actual user and password validation logic
 function isValidCredentials(user, pass) {
