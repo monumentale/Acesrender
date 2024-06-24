@@ -1,58 +1,104 @@
 // Server-side logic (Node.js)
-const express = require('express');
+const express = require("express");
 const app = express();
-const admin = require('firebase-admin');
-const cors = require('cors'); 
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
+const admin = require("firebase-admin");
+const cors = require("cors");
+const nodemailer = require("nodemailer");
+const bodyParser = require("body-parser");
 
 app.use(cors());
 app.use(bodyParser.json());
 var serviceAccount = require("./acesbinarytrades-firebase-adminsdk-w65z3-a6af80ebc3.json");
-let PORT = process.env.PORT || 5000
+let PORT = process.env.PORT || 5000;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://acesbinarytrades-default-rtdb.firebaseio.com"
+  databaseURL: "https://acesbinarytrades-default-rtdb.firebaseio.com",
 });
 
-app.post('/send-mail', (req, res) => {
+app.post("/send-mail", (req, res) => {
   // Immediately end the response
-  res.status(202).json({ message: 'Request received and is being processed.' });
-
+  res.status(202).json({ message: "Request received and is being processed." });
   // Extract data from request body
-  const { user, pass, htmlToSend, email, subject ,CompanyName} = req.body;
-
+  const { user, pass, htmlToSend, email, subject, CompanyName } = req.body;
   // Process the request
   (async () => {
     try {
+      ///////////FOR GMAIL /////////////////////
+      ///////////FOR GMAIL /////////////////////
+      ///////////FOR GMAIL /////////////////////
+      // {
+      //   host: 'smtp.gmail.com',
+      //   port: 465,
+      //   auth: {
+      //     user: process.env.EMAIL_ADMIN,
+      //     pass: process.env.EMAIL_PASS,
+      //   },
+      //   tls: {
+      //     rejectUnauthorized: false
+      //   }
+
       const transporter = nodemailer.createTransport({
-        host: 'mail.privateemail.com',
+        host: "mail.privateemail.com",
         port: 587,
         secure: false,
-        // port: 465,
-        // secure: true,
         auth: {
-          user:user,
-          pass:pass
+          user: user,
+          pass: pass,
         },
       });
-  
+
       const mailOptions = {
-        from:`${CompanyName} <${user}>`,
+        from: `${CompanyName} <${user}>`,
         to: email,
-        subject:subject,
-        html: `${htmlToSend}`
+        subject: subject,
+        html: `${htmlToSend}`,
       };
 
       const info = await transporter.sendMail(mailOptions);
-      console.log('Email sent: ' + info.response);
+      console.log("Email sent: " + info.response);
     } catch (error) {
-      console.error('Error occurred:', error.message);
+      console.error("Error occurred:", error.message);
     }
   })();
 });
 
+app.post("/send-mail-gmail", (req, res) => {
+  // Immediately end the response
+  res.status(202).json({ message: "Request received and is being processed." });
+  // Extract data from request body
+  const { user, pass, htmlToSend, email, subject, CompanyName } = req.body;
+  // Process the request
+  (async () => {
+    try {
+      const transporter = nodemailer.createTransport(
+        {
+          host: "smtp.gmail.com",
+          port: 465,
+          auth: {
+            user: user,
+            pass: pass,
+          },
+          tls: {
+            rejectUnauthorized: false,
+          },
+        }
+      );
+
+      const mailOptions = {
+        from: `${CompanyName} <${user}>`,
+        to: email,
+        subject: subject,
+        html: `${htmlToSend}`,
+      };
+
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent: " + info.response);
+    } catch (error) {
+      console.error("Error occurred:", error.message);
+    }
+  })();
+});
 
 // app.post('/send-mail', async (req, res) => {
 //   try {
@@ -100,26 +146,20 @@ function isValidCredentials(user, pass) {
   return true;
 }
 
-
-
-app.delete('/api/deleteUser/:uid', async (req, res) => {
+app.delete("/api/deleteUser/:uid", async (req, res) => {
   const uid = req.params.uid;
 
   try {
     await admin.auth().deleteUser(uid);
-    res.status(200).send('User deleted successfully');
+    res.status(200).send("User deleted successfully");
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).send('Error deleting user');
+    console.error("Error deleting user:", error);
+    res.status(500).send("Error deleting user");
   }
 });
-
-
 
 // Your React app can make a DELETE request to /api/deleteUser/:uid
 // Start the server
 app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Listen in in the port ${PORT}`);
+  console.log(`Listen in in the port ${PORT}`);
 });
-
-  
