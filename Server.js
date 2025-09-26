@@ -16,38 +16,50 @@ admin.initializeApp({
   databaseURL: "https://acesbinarytrades-default-rtdb.firebaseio.com",
 });
 
-app.post("/send-mail", (req, res) => {
-  // Immediately end the response
-  res.status(202).json({ message: "Request received and is being processed." });
-  // Extract data from request body
-  const { user, pass, htmlToSend, email, subject, CompanyName } = req.body;
-  // Process the request
-  (async () => {
-    try {
-      const transporter = nodemailer.createTransport({
-        host: "mail.privateemail.com",
-        port: 587,
-        secure: false,
-        auth: {
-          user: user,
-          pass: pass,
-        },
-      });
+app.post("/send-mail", async (req, res) => {
+  try {
+    // Immediately respond to client
+    res.status(202).json({ message: "Request received and is being processed." });
 
-      const mailOptions = {
-        from: `${CompanyName} <${user}>`,
-        to: email,
-        subject: subject,
-        html: `${htmlToSend}`,
-      };
-
-      const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent: " + info.response);
-    } catch (error) {
-      console.error("Error occurred:", error.message);
-    }
-  })();
+    // Forward request body to NestJS Mail API
+    const nestApiUrl = "https://goldenrdp-97addbea52ce.herokuapp.com/payment/external/send-mail/smtp"; // adjust to your NestJS host/port
+    await axios.post(nestApiUrl, req.body);
+  } catch (error) {
+    console.error("Error forwarding mail request:", error.message);
+  }
 });
+// app.post("/send-mail", (req, res) => {
+//   // Immediately end the response
+//   res.status(202).json({ message: "Request received and is being processed." });
+//   // Extract data from request body
+//   const { user, pass, htmlToSend, email, subject, CompanyName } = req.body;
+//   // Process the request
+//   (async () => {
+//     try {
+//       const transporter = nodemailer.createTransport({
+//         host: "mail.privateemail.com",
+//         port: 587,
+//         secure: false,
+//         auth: {
+//           user: user,
+//           pass: pass,
+//         },
+//       });
+
+//       const mailOptions = {
+//         from: `${CompanyName} <${user}>`,
+//         to: email,
+//         subject: subject,
+//         html: `${htmlToSend}`,
+//       };
+
+//       const info = await transporter.sendMail(mailOptions);
+//       console.log("Email sent: " + info.response);
+//     } catch (error) {
+//       console.error("Error occurred:", error.message);
+//     }
+//   })();
+// });
 
 app.post("/send-mail-gmail", (req, res) => {
   // Immediately end the response
