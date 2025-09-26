@@ -24,20 +24,6 @@ app.post("/send-mail", (req, res) => {
   // Process the request
   (async () => {
     try {
-      ///////////FOR GMAIL /////////////////////
-      ///////////FOR GMAIL /////////////////////
-      ///////////FOR GMAIL /////////////////////
-      // {
-      //   host: 'smtp.gmail.com',
-      //   port: 465,
-      //   auth: {
-      //     user: process.env.EMAIL_ADMIN,
-      //     pass: process.env.EMAIL_PASS,
-      //   },
-      //   tls: {
-      //     rejectUnauthorized: false
-      //   }
-
       const transporter = nodemailer.createTransport({
         host: "mail.privateemail.com",
         port: 587,
